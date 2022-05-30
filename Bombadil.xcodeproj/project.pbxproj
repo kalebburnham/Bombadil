@@ -7,10 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5006B0DB283848D900D2D536 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5006B0DA283848D800D2D536 /* libgtest.a */; };
+		5006B0E32841803F00D2D536 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5006B0E22841803F00D2D536 /* main.cpp */; };
+		5006B0E82841E53900D2D536 /* Library.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5006B0D2283832DF00D2D536 /* Library.cpp */; };
+		5006B0EC2842D00100D2D536 /* clients.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5006B0E92842D00100D2D536 /* clients.cpp */; };
+		5006B0EF2842E51400D2D536 /* Library.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5006B0D2283832DF00D2D536 /* Library.cpp */; };
 		50D146C2282F55E90031342E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50D146C1282F55E90031342E /* main.cpp */; };
+		50D146C5282F5E8E0031342E /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 50D146C4282F5E8E0031342E /* libssl.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		5006B0DE2841803F00D2D536 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		50D146A2282F4EC70031342E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -23,26 +38,53 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5006B0D2283832DF00D2D536 /* Library.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Library.cpp; sourceTree = "<group>"; };
+		5006B0D3283832DF00D2D536 /* Library.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Library.hpp; sourceTree = "<group>"; };
+		5006B0DA283848D800D2D536 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest.a; path = ../googletest/build/lib/libgtest.a; sourceTree = "<group>"; };
+		5006B0E02841803F00D2D536 /* BombadilTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BombadilTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5006B0E22841803F00D2D536 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		5006B0E92842D00100D2D536 /* clients.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = clients.cpp; sourceTree = "<group>"; };
+		5006B0EA2842D00100D2D536 /* clients.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = clients.hpp; sourceTree = "<group>"; };
 		50D146A4282F4EC70031342E /* Bombadil */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Bombadil; sourceTree = BUILT_PRODUCTS_DIR; };
 		50D146C1282F55E90031342E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		50D146C4282F5E8E0031342E /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = Bombadil/libssl.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		50D146A1282F4EC70031342E /* Frameworks */ = {
+		5006B0DD2841803F00D2D536 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		50D146A1282F4EC70031342E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5006B0DB283848D900D2D536 /* libgtest.a in Frameworks */,
+				50D146C5282F5E8E0031342E /* libssl.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5006B0E12841803F00D2D536 /* BombadilTest */ = {
+			isa = PBXGroup;
+			children = (
+				5006B0E22841803F00D2D536 /* main.cpp */,
+			);
+			path = BombadilTest;
+			sourceTree = "<group>";
+		};
 		50D1469B282F4EC70031342E = {
 			isa = PBXGroup;
 			children = (
 				50D146A6282F4EC70031342E /* Bombadil */,
+				5006B0E12841803F00D2D536 /* BombadilTest */,
 				50D146A5282F4EC70031342E /* Products */,
+				50D146C3282F5E8E0031342E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -50,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				50D146A4282F4EC70031342E /* Bombadil */,
+				5006B0E02841803F00D2D536 /* BombadilTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -57,14 +100,44 @@
 		50D146A6282F4EC70031342E /* Bombadil */ = {
 			isa = PBXGroup;
 			children = (
+				5006B0D2283832DF00D2D536 /* Library.cpp */,
+				5006B0D3283832DF00D2D536 /* Library.hpp */,
 				50D146C1282F55E90031342E /* main.cpp */,
+				5006B0E92842D00100D2D536 /* clients.cpp */,
+				5006B0EA2842D00100D2D536 /* clients.hpp */,
 			);
 			path = Bombadil;
+			sourceTree = "<group>";
+		};
+		50D146C3282F5E8E0031342E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5006B0DA283848D800D2D536 /* libgtest.a */,
+				50D146C4282F5E8E0031342E /* libssl.dylib */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5006B0DF2841803F00D2D536 /* BombadilTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5006B0E62841803F00D2D536 /* Build configuration list for PBXNativeTarget "BombadilTest" */;
+			buildPhases = (
+				5006B0DC2841803F00D2D536 /* Sources */,
+				5006B0DD2841803F00D2D536 /* Frameworks */,
+				5006B0DE2841803F00D2D536 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BombadilTest;
+			productName = BombadilTest;
+			productReference = 5006B0E02841803F00D2D536 /* BombadilTest */;
+			productType = "com.apple.product-type.tool";
+		};
 		50D146A3282F4EC70031342E /* Bombadil */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 50D146AB282F4EC70031342E /* Build configuration list for PBXNativeTarget "Bombadil" */;
@@ -91,6 +164,9 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1320;
 				TargetAttributes = {
+					5006B0DF2841803F00D2D536 = {
+						CreatedOnToolsVersion = 13.2.1;
+					};
 					50D146A3282F4EC70031342E = {
 						CreatedOnToolsVersion = 13.2.1;
 					};
@@ -110,15 +186,27 @@
 			projectRoot = "";
 			targets = (
 				50D146A3282F4EC70031342E /* Bombadil */,
+				5006B0DF2841803F00D2D536 /* BombadilTest */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5006B0DC2841803F00D2D536 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5006B0E82841E53900D2D536 /* Library.cpp in Sources */,
+				5006B0E32841803F00D2D536 /* main.cpp in Sources */,
+				5006B0EC2842D00100D2D536 /* clients.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		50D146A0282F4EC70031342E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5006B0EF2842E51400D2D536 /* Library.cpp in Sources */,
 				50D146C2282F55E90031342E /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -126,6 +214,37 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		5006B0E42841803F00D2D536 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					/usr/local/include/,
+					"$(PROJECT_DIR)/Bombadil",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/BombadilTest",
+					"$(PROJECT_DIR)/Bombadil/**",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=*]" = (
+					"$(PROJECT_DIR)/Bombadil",
+					"$(PROJECT_DIR)/BombadilTest",
+					/usr/local/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = "";
+			};
+			name = Debug;
+		};
+		5006B0E52841803F00D2D536 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = "";
+			};
+			name = Release;
+		};
 		50D146A9282F4EC70031342E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -165,7 +284,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -177,11 +296,19 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/include/;
+				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 12.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_LDFLAGS[arch=*]" = (
+					"-lssl",
+					"-lcrypto",
+					"-lgtest",
+				);
 				SDKROOT = macosx;
+				"TEST_HOST[sdk=*]" = "";
 			};
 			name = Debug;
 		};
@@ -223,7 +350,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -241,6 +368,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					/usr/local/include/,
+					"$(PROJECT_DIR)/Bombadil",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Bombadil/**",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -249,6 +384,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Bombadil",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -256,6 +395,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5006B0E62841803F00D2D536 /* Build configuration list for PBXNativeTarget "BombadilTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5006B0E42841803F00D2D536 /* Debug */,
+				5006B0E52841803F00D2D536 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		50D1469F282F4EC70031342E /* Build configuration list for PBXProject "Bombadil" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
