@@ -46,7 +46,7 @@ public:
     boost::asio::io_context io;
     
     coinbase_client(boost::asio::io_context &ioc, ssl::context &ctx);
-    void connect(boost::asio::ip::tcp::resolver& resolver);
+    void connect();
     void parse(string s);
     void write(string text);
     

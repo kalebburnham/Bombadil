@@ -8,13 +8,14 @@
 #include "clients.hpp"
 
 coinbase_client::coinbase_client(boost::asio::io_context &ioc, ssl::context &ctx) : ws(ioc, ctx) {
-    boost::asio::ip::tcp::resolver resolver{ioc};
-    connect(resolver);
+
 }
 
-inline void coinbase_client::connect(boost::asio::ip::tcp::resolver& resolver) {
+inline void coinbase_client::connect() {
     /* Performs the websocket handshake. Still need to write the subscription message. */
 
+    boost::asio::ip::tcp::resolver resolver{io};
+    
     // Look up the domain name
     auto const results = resolver.resolve(BASE_URL, PORT);
 
@@ -135,8 +136,15 @@ inline void coinbase_client::write(string text) {
 
 inline void coinbase_client::stream() {
     allowStreaming = true;
-    write("{\"type\": \"subscribe\",\"product_ids\": [\"ETH-USD\",\"ETH-EUR\"], \"channels\":[\"level2\"]}");
-    listen();
+    try {
+        write("{\"type\": \"subscribe\",\"product_ids\": [\"ETH-USD\",\"ETH-EUR\"], \"channels\":[\"level2\"]}");
+        listen();
+    } catch (std::exception const& e) {
+        allowStreaming = false;
+        std::cerr << "Error when kicking off streaming. Did you connect?" << std::endl;
+        std::cerr << e.what() << std::endl;
+    }
+    
 }
 
 inline void coinbase_client::stop_stream() {

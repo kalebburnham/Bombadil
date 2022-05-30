@@ -18,6 +18,10 @@ void analyze(std::string s) {
     
 }
 
+void connect(std::string s, coinbase_client* cb) {
+    cb->connect();
+}
+
 void help(std::string s) {
     std::cout << "Available commands are 'analyze', 'help', 'stream', 'stop' or 'quit'." << std::endl;
 }
@@ -39,10 +43,10 @@ void stop(std::string s, coinbase_client* cb) {
 int main() {
     boost::asio::ssl::context ctx(boost::asio::ssl::context::tlsv12);
     boost::asio::io_context ioc;
-    coinbase_client cb{ioc, ctx};
+    coinbase_client client{ioc, ctx};
     
     Library* ob_library = new Library();
-    cb.library = ob_library;
+    client.library = ob_library;
     
     while (1) {
         std::string input = "";
@@ -50,14 +54,16 @@ int main() {
         
         if (input == "help" || input == "h") {
             help(input);
+        } else if (input == "connect" || input == "c") {
+            connect(input, &client);
         } else if (input == "stream" || input == "s") {
             std::cout << "Starting Stream" << std::endl;
-            stream(input, &cb);
+            stream(input, &client);
         } else if (input == "analyze") {
             std::cout << "TODO: Analyze" << std::endl;
         } else if (input == "stop") {
             std::cout << "Stopping stream" << std::endl;
-            stop(input, &cb);
+            stop(input, &client);
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             
             Book* b = ob_library->checkout("ETH", "USD");
