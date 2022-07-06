@@ -12,6 +12,8 @@
 		5006B0E82841E53900D2D536 /* Library.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5006B0D2283832DF00D2D536 /* Library.cpp */; };
 		5006B0EC2842D00100D2D536 /* clients.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5006B0E92842D00100D2D536 /* clients.cpp */; };
 		5006B0EF2842E51400D2D536 /* Library.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5006B0D2283832DF00D2D536 /* Library.cpp */; };
+		5006B0F628452E1A00D2D536 /* arbitrage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5006B0F428452E1A00D2D536 /* arbitrage.cpp */; };
+		5006B0F728452E1A00D2D536 /* arbitrage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5006B0F428452E1A00D2D536 /* arbitrage.cpp */; };
 		50D146C2282F55E90031342E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50D146C1282F55E90031342E /* main.cpp */; };
 		50D146C5282F5E8E0031342E /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 50D146C4282F5E8E0031342E /* libssl.dylib */; };
 /* End PBXBuildFile section */
@@ -45,6 +47,8 @@
 		5006B0E22841803F00D2D536 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		5006B0E92842D00100D2D536 /* clients.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = clients.cpp; sourceTree = "<group>"; };
 		5006B0EA2842D00100D2D536 /* clients.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = clients.hpp; sourceTree = "<group>"; };
+		5006B0F428452E1A00D2D536 /* arbitrage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = arbitrage.cpp; sourceTree = "<group>"; };
+		5006B0F528452E1A00D2D536 /* arbitrage.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = arbitrage.hpp; sourceTree = "<group>"; };
 		50D146A4282F4EC70031342E /* Bombadil */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Bombadil; sourceTree = BUILT_PRODUCTS_DIR; };
 		50D146C1282F55E90031342E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		50D146C4282F5E8E0031342E /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = Bombadil/libssl.dylib; sourceTree = "<group>"; };
@@ -103,6 +107,8 @@
 				5006B0D2283832DF00D2D536 /* Library.cpp */,
 				5006B0D3283832DF00D2D536 /* Library.hpp */,
 				50D146C1282F55E90031342E /* main.cpp */,
+				5006B0F428452E1A00D2D536 /* arbitrage.cpp */,
+				5006B0F528452E1A00D2D536 /* arbitrage.hpp */,
 				5006B0E92842D00100D2D536 /* clients.cpp */,
 				5006B0EA2842D00100D2D536 /* clients.hpp */,
 			);
@@ -199,6 +205,7 @@
 				5006B0E82841E53900D2D536 /* Library.cpp in Sources */,
 				5006B0E32841803F00D2D536 /* main.cpp in Sources */,
 				5006B0EC2842D00100D2D536 /* clients.cpp in Sources */,
+				5006B0F728452E1A00D2D536 /* arbitrage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -208,6 +215,7 @@
 			files = (
 				5006B0EF2842E51400D2D536 /* Library.cpp in Sources */,
 				50D146C2282F55E90031342E /* main.cpp in Sources */,
+				5006B0F628452E1A00D2D536 /* arbitrage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

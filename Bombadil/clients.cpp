@@ -12,7 +12,7 @@ coinbase_client::coinbase_client(boost::asio::io_context &ioc, ssl::context &ctx
 }
 
 inline void coinbase_client::connect() {
-    /* Performs the websocket handshake. Still need to write the subscription message. */
+    /* Performs the websocket handshake. */
 
     boost::asio::ip::tcp::resolver resolver{io};
     
@@ -77,6 +77,7 @@ inline void coinbase_client::parse(string s) {
     string base = "";
     string target = "";
          
+    
     boost::json::value data = boost::json::parse(s);
     
     string type = boost::json::value_to<string>(data.at("type"));
@@ -90,24 +91,25 @@ inline void coinbase_client::parse(string s) {
         
         Book* b = library->checkout(get_base(product_id), get_target(product_id));
         
+
         for (int i = 0; i < bids.size(); i++) {
-            double price;
-            double quantity;
-            
-            price = stod(boost::json::value_to<string>(bids.at(i).as_array().at(0)));
-            quantity = stod(boost::json::value_to<string>(bids.at(i).as_array().at(1)));
-            
-            b->add_bid(price, quantity);
+            double price = stod(boost::json::value_to<string>(bids.at(i).as_array().at(0)));
+            double quantity = stod(boost::json::value_to<string>(bids.at(i).as_array().at(1)));
+            if (quantity == 0) {
+                b->remove_bid(price);
+            } else {
+                b->add_bid(price, quantity);
+            }
         }
         
-        for (int i = 0; i < asks.size(); i++) {
-            double price;
-            double quantity;
-            
-            price = stod(boost::json::value_to<string>(asks.at(i).as_array().at(0)));
-            quantity = stod(boost::json::value_to<string>(asks.at(i).as_array().at(1)));
-            
-            b->add_ask(price, quantity);
+        for (int i = 0; i < asks.size(); i++) {            
+            double price = stod(boost::json::value_to<string>(asks.at(i).as_array().at(0)));
+            double quantity = stod(boost::json::value_to<string>(asks.at(i).as_array().at(1)));
+            if (quantity == 0) {
+                b->remove_ask(price);
+            } else {
+                b->add_ask(price, quantity);
+            }
         }
         
         library->checkin(get_base(product_id), get_target(product_id));
@@ -122,9 +124,17 @@ inline void coinbase_client::parse(string s) {
         
         Book* b = library->checkout(get_base(product_id), get_target(product_id));
         if (action == "buy") {
-            b->add_bid(price, quantity);
+            if (quantity == 0) {
+                b->remove_bid(price);
+            } else {
+                b->add_bid(price, quantity);
+            }
         } else {
-            b->add_ask(price, quantity);
+            if (quantity == 0) {
+                b->remove_ask(price);
+            } else {
+                b->add_ask(price, quantity);
+            }
         }
         library->checkin(get_base(product_id), get_target(product_id));
     }
@@ -137,7 +147,7 @@ inline void coinbase_client::write(string text) {
 inline void coinbase_client::stream() {
     allowStreaming = true;
     try {
-        write("{\"type\": \"subscribe\",\"product_ids\": [\"ETH-USD\",\"ETH-EUR\"], \"channels\":[\"level2\"]}");
+        write("{\"type\": \"subscribe\",\"product_ids\": [\"ETH-USD\",\"ETH-BTC\", \"BTC-USD\"], \"channels\":[\"level2\"]}");
         listen();
     } catch (std::exception const& e) {
         allowStreaming = false;
@@ -182,6 +192,84 @@ string coinbase_client::get_base(string ticker) {
 }
 
 string coinbase_client::get_target(string ticker) {
+    size_t idx = ticker.find("-");
+    return ticker.substr(idx+1, ticker.size() - (idx+1));
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+
+binance_client::binance_client(boost::asio::io_context &ioc, ssl::context &ctx) : ws(ioc, ctx) {
+
+}
+
+inline void binance_client::connect() {
+    /* Performs the websocket handshake. */
+
+    boost::asio::ip::tcp::resolver resolver{io};
+    
+    // Look up the domain name
+    auto const results = resolver.resolve(BASE_URL, PORT);
+
+    // Make the connection on the IP address we get from a lookup
+    auto ep = boost::asio::connect(get_lowest_layer(ws), results);
+
+    // Set SNI Hostname (many hosts need this to handshake successfully)
+    if(! SSL_set_tlsext_host_name(ws.next_layer().native_handle(), BASE_URL.c_str()))
+        throw boost::beast::system_error(
+                                         boost::beast::error_code(
+                static_cast<int>(::ERR_get_error()),
+                boost::asio::error::get_ssl_category()),
+            "Failed to set SNI Hostname");
+
+    // Update the host_ string. This will provide the value of the
+    // Host HTTP header during the WebSocket handshake.
+    // See https://tools.ietf.org/html/rfc7230#section-5.4
+    string host = BASE_URL + ':' + to_string(ep.port());
+
+    // Perform the SSL handshake
+    ws.next_layer().handshake(ssl::stream_base::client);
+
+    // Set a decorator to change the User-Agent of the handshake
+    ws.set_option(boost::beast::websocket::stream_base::decorator(
+                                                                  [](boost::beast::websocket::request_type& req)
+        {
+            req.set(boost::beast::http::field::user_agent,
+                string(BOOST_BEAST_VERSION_STRING) +
+                    " websocket-client-coro");
+        }));
+
+    // Perform the websocket handshake
+    ws.handshake(BASE_URL, "/");
+}
+
+inline void binance_client::parse(string s) {
+    
+}
+
+inline void binance_client::write(string text) {
+    
+}
+
+inline void binance_client::stream() {
+// See this for keeping track of an orderbook.
+// https://binance-docs.github.io/apidocs/spot/en/#how-to-manage-a-local-order-book-correctly
+}
+
+inline void binance_client::stop_stream() {
+    allowStreaming = false;
+}
+
+inline void binance_client::listen() {
+    
+}
+
+string binance_client::get_base(string ticker) {
+    size_t idx = ticker.find("-");
+    return ticker.substr(0, idx);
+}
+
+string binance_client::get_target(string ticker) {
     size_t idx = ticker.find("-");
     return ticker.substr(idx+1, ticker.size() - (idx+1));
 }

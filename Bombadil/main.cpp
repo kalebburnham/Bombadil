@@ -11,11 +11,15 @@
 
 #include "Library.hpp"
 #include "clients.cpp"
+#include "arbitrage.hpp"
 
 bool streaming_is_enabled = true;
 
-void analyze(std::string s) {
-    
+void analyze(std::string s, triarb* arb) {
+    std::thread t2(&triarb::start, arb);
+    std::cout << "Kicked off analyzer. Detaching thread..." << std::endl;
+    t2.detach();
+    //arb->start();
 }
 
 void connect(std::string s, coinbase_client* cb) {
@@ -23,7 +27,7 @@ void connect(std::string s, coinbase_client* cb) {
 }
 
 void help(std::string s) {
-    std::cout << "Available commands are 'analyze', 'help', 'stream', 'stop' or 'quit'." << std::endl;
+    std::cout << "Available commands are 'analyze', 'connect', 'help', 'stream', 'stop' or 'quit'." << std::endl;
 }
 
 void shutdown(std::string s) {
@@ -33,11 +37,13 @@ void shutdown(std::string s) {
 
 void stream(std::string s, coinbase_client* cb) {
     std::thread t1(&coinbase_client::stream, cb);
+    std::cout << "Kicked off. Detaching thread..." << std::endl;
     t1.detach();
 }
 
-void stop(std::string s, coinbase_client* cb) {
+void stop(std::string s, coinbase_client* cb, triarb* arb) {
     cb->stop_stream();
+    arb->stop();
 }
 
 int main() {
@@ -47,6 +53,12 @@ int main() {
     
     Library* ob_library = new Library();
     client.library = ob_library;
+
+    triarb* arb = new triarb();
+    arb->library = ob_library;
+    arb->books[0] = make_pair("ETH", "USD");
+    arb->books[1] = make_pair("ETH", "BTC");
+    arb->books[2] = make_pair("BTC", "USD");
     
     while (1) {
         std::string input = "";
@@ -59,14 +71,15 @@ int main() {
         } else if (input == "stream" || input == "s") {
             std::cout << "Starting Stream" << std::endl;
             stream(input, &client);
-        } else if (input == "analyze") {
-            std::cout << "TODO: Analyze" << std::endl;
+        } else if (input == "analyze" || input == "a") {
+            std::cout << "Analyzing..." << std::endl;
+            analyze(input, arb);
         } else if (input == "stop") {
             std::cout << "Stopping stream" << std::endl;
-            stop(input, &client);
+            stop(input, &client, arb);
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             
-            Book* b = ob_library->checkout("ETH", "USD");
+            Book* b = ob_library->checkout("BTC", "USD");
             std::cout << "BIDS" << std::endl;
             for (auto const &pair: b->bids) {
                 std::cout << "{" << pair.first << ": " << pair.second << "}\n";
@@ -76,7 +89,7 @@ int main() {
             for (auto const &pair: b->asks) {
                     std::cout << "{" << pair.first << ": " << pair.second << "}\n";
             }
-            ob_library->checkin("ETH","USD");
+            ob_library->checkin("BTC","USD");
             
         } else if (input == "quit") {
             shutdown(input);

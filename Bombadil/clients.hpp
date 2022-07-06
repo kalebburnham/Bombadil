@@ -59,4 +59,34 @@ private:
     string get_target(string ticker);
 };
 
+class binance_client {
+public:
+    
+    // CONFIG
+    const string BASE_URL = "wss://stream.binance.com";
+    const string PORT = "9443";
+    // END CONFIG
+    
+    bool allowStreaming = false;
+    
+    Library* library;
+    
+    boost::beast::websocket::stream<boost::beast::ssl_stream<boost::asio::ip::tcp::socket>> ws;
+    boost::asio::io_context io;
+    
+    binance_client(boost::asio::io_context &ioc, ssl::context &ctx);
+    void connect();
+    void parse(string s);
+    void write(string text);
+    
+    void stream();
+    void stop_stream();
+    void listen();
+    
+private:
+    string get_base(string ticker);
+    string get_target(string ticker);
+};
+
+
 #endif /* clients_hpp */

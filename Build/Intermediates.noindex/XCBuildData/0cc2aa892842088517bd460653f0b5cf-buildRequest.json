@@ -1,0 +1,59 @@
+{
+  "_buildCommand2" : {
+    "command" : "build",
+    "skipDependencies" : false,
+    "style" : "buildOnly"
+  },
+  "buildCommand" : "build",
+  "configuredTargets" : [
+    {
+      "guid" : "13235430657d59882f746fd0a76ab52adcbc5f7ee24aaea246d656db572b2cc5"
+    }
+  ],
+  "containerPath" : "/Users/kalebburnham/Workspaces/Bombadil/Bombadil.xcodeproj",
+  "continueBuildingAfterErrors" : false,
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "build",
+    "activeArchitecture" : "arm64",
+    "activeRunDestination" : {
+      "disableOnlyActiveArch" : false,
+      "platform" : "macosx",
+      "sdk" : "macosx12.1",
+      "sdkVariant" : "macos",
+      "supportedArchitectures" : [
+        "arm64e",
+        "arm64",
+        "x86_64"
+      ],
+      "targetArchitecture" : "arm64"
+    },
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "/Users/kalebburnham/Workspaces/Bombadil/Build/Intermediates.noindex",
+      "buildProductsPath" : "/Users/kalebburnham/Workspaces/Bombadil/Build/Products",
+      "derivedDataPath" : "/Users/kalebburnham/Library/Developer/Xcode/DerivedData",
+      "indexDataStoreFolderPath" : "/Users/kalebburnham/Library/Developer/Xcode/DerivedData/Bombadil-dtolwugvpwgsevelnyeadfsavgiq/Index/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/kalebburnham/Library/Developer/Xcode/DerivedData/Bombadil-dtolwugvpwgsevelnyeadfsavgiq/Index/PrecompiledHeaders",
+      "pchPath" : "/Users/kalebburnham/Workspaces/Bombadil/Build/Intermediates.noindex/PrecompiledHeaders"
+    },
+    "configurationName" : "Debug",
+    "overrides" : {
+      "synthesized" : {
+        "table" : {
+          "ENABLE_PREVIEWS" : "NO"
+        }
+      }
+    }
+  },
+  "qos" : "default",
+  "schemeCommand" : "launch",
+  "schemeCommand2" : "launch",
+  "shouldCollectMetrics" : false,
+  "showNonLoggedProgress" : true,
+  "useDryRun" : false,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}
