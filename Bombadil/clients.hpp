@@ -32,43 +32,11 @@
 
 using namespace std;
 
-class coinbase_client {
+class client {
 public:
     
-    // CONFIG
-    const string BASE_URL = "ws-feed.exchange.coinbase.com";
-    const string PORT = "443";
-    // END CONFIG
-    
-    bool allowStreaming = false;
-    
-    Library* library;
-    
-    boost::beast::websocket::stream<boost::beast::ssl_stream<boost::asio::ip::tcp::socket>> ws;
-    boost::asio::io_context io;
-    
-    coinbase_client(boost::asio::io_context &ioc, ssl::context &ctx);
-    void connect();
-    void parse(string s);
-    void write(string text);
-    
-    void stream();
-    void stop_stream();
-    void listen();
-    
-private:
-    string get_base(string ticker);
-    string get_target(string ticker);
-};
-
-class binance_client {
-public:
-    
-    // CONFIG
     const string BASE_URL = "stream.binance.com";
     const string PORT = "9443";
-    // END CONFIG
-    
     bool allowStreaming = false;
     
     Library* library;
@@ -76,15 +44,11 @@ public:
     boost::beast::websocket::stream<boost::beast::ssl_stream<boost::asio::ip::tcp::socket>> ws;
     boost::asio::io_context io;
     
-    binance_client(boost::asio::io_context &ioc, ssl::context &ctx);
-    
+    client(boost::asio::io_context &ioc, ssl::context &ctx);
     void connect();
-    void parse(string s);
-    void write(string text);
-    string getDepthSnapshot(string ticker);
-    
-    void stream();
+    void disconnect();
     void stop_stream();
+    void write(string message);
     void listen();
     
 private:
@@ -92,9 +56,40 @@ private:
     void connect_to_ip_addresses(boost::asio::ip::tcp::resolver::results_type endpoints);
     void set_sni_hostname();
     void perform_ssl_handshake();
+    virtual string get_host(string exchange);
+    virtual string get_port(string exchange);
+    
+    virtual void perform_websockets_handshake();
+    virtual void parse(string s);
+};
+
+class coinbase_client : public client {
+public:
+    coinbase_client(boost::asio::io_context &ioc, ssl::context &ctx);
+    void parse(string s);
+    void stream();
+    
+private:
     void perform_websockets_handshake();
     string get_base(string ticker);
     string get_target(string ticker);
+    string get_host(string exchange);
+    string get_port(string exchange);
+};
+
+class binance_client : public client {
+public:
+    binance_client(boost::asio::io_context &ioc, ssl::context &ctx);
+    void parse(string s);
+    string getDepthSnapshot(string ticker);
+    void stream();
+    
+private:
+    void perform_websockets_handshake();
+    string get_base(string ticker);
+    string get_target(string ticker);
+    string get_host(string exchange);
+    string get_port(string exchange);
 };
 
 

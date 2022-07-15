@@ -7,38 +7,70 @@
 
 #include "clients.hpp"
 
-coinbase_client::coinbase_client(boost::asio::io_context &ioc, ssl::context &ctx) : ws(ioc, ctx) {
 
+client::client(boost::asio::io_context &ioc, ssl::context &ctx) : ws(ioc, ctx) {}
+void client::connect() {
+    connect_to_ip_addresses(resolve_ip_addresses());
+    set_sni_hostname();
+    perform_ssl_handshake();
+    perform_websockets_handshake();
 }
 
-inline void coinbase_client::connect() {
-    /* Performs the websocket handshake. */
+void client::disconnect() {
+    boost::beast::error_code ec;
+    // If this line throws an exception due to a truncated stream, ignore the error.
+    // https://github.com/boostorg/beast/issues/824
+    ws.close(boost::beast::websocket::close_code::normal, ec);
+    // If we get here then the connection is closed gracefully
+    cout << "Connection closed.\n";
+}
 
-    boost::asio::ip::tcp::resolver resolver{io};
+void client::write(string text) {
+    ws.write(boost::asio::buffer(text));
+}
+
+void client::stop_stream() {
+    allowStreaming = false;
+}
+
+void client::listen() {
+    boost::beast::flat_buffer buffer;
+
+    while (allowStreaming) {
+        ws.read(buffer);
+        parse(boost::beast::buffers_to_string(buffer.data()));
+        // The make_printable() function helps print a ConstBufferSequence
+        //cout << boost::beast::make_printable(buffer.data()) << endl;
+        buffer.consume(buffer.size());
+    }
     
-    // Look up the domain name
-    auto const results = resolver.resolve(BASE_URL, PORT);
+    disconnect();
+}
 
-    // Make the connection on the IP address we get from a lookup
-    auto ep = boost::asio::connect(get_lowest_layer(ws), results);
+boost::asio::ip::tcp::resolver::results_type client::resolve_ip_addresses() {
+    cout << "Looking up the domain name..." << endl;
+    boost::asio::ip::tcp::resolver resolver{io};
+    boost::asio::ip::tcp::resolver::results_type results = resolver.resolve(get_host("test"), get_port("test"));
+    return results;
+}
 
-    // Set SNI Hostname (many hosts need this to handshake successfully)
-    if(! SSL_set_tlsext_host_name(ws.next_layer().native_handle(), BASE_URL.c_str()))
+void client::connect_to_ip_addresses(boost::asio::ip::tcp::resolver::results_type endpoints) {
+    boost::asio::connect(get_lowest_layer(ws), endpoints);
+}
+
+void client::set_sni_hostname() {
+    cout << "Setting SNI host names..." << endl;
+    if (!SSL_set_tlsext_host_name(ws.next_layer().native_handle(),
+                                          get_host("test").c_str()))
         throw boost::beast::system_error(
-                                         boost::beast::error_code(
-                static_cast<int>(::ERR_get_error()),
-                boost::asio::error::get_ssl_category()),
-            "Failed to set SNI Hostname");
+                                         boost::beast::error_code(static_cast<int>(::ERR_get_error()),
+                                      boost::asio::error::get_ssl_category()),
+                    "Failed to set SNI Hostname");
+}
 
-    // Update the host_ string. This will provide the value of the
-    // Host HTTP header during the WebSocket handshake.
-    // See https://tools.ietf.org/html/rfc7230#section-5.4
-    string host = BASE_URL + ':' + to_string(ep.port());
-
-    // Perform the SSL handshake
+void client::perform_ssl_handshake() {
+    cout << "Performing the SSL handshake..." << endl;
     ws.next_layer().handshake(ssl::stream_base::client);
-
-    // Set a decorator to change the User-Agent of the handshake
     ws.set_option(boost::beast::websocket::stream_base::decorator(
                                                                   [](boost::beast::websocket::request_type& req)
         {
@@ -46,9 +78,15 @@ inline void coinbase_client::connect() {
                 string(BOOST_BEAST_VERSION_STRING) +
                     " websocket-client-coro");
         }));
+}
 
-    // Perform the websocket handshake
-    ws.handshake(BASE_URL, "/");
+void client::perform_websockets_handshake() {}
+void client::parse(string s) {}
+string client::get_host(string exchange) { return ""; }
+string client::get_port(string exchange) { return ""; }
+
+coinbase_client::coinbase_client(boost::asio::io_context &ioc, ssl::context &ctx) : client(ioc, ctx) {
+    
 }
 
 /*
@@ -73,11 +111,10 @@ inline void coinbase_client::connect() {
  
  https://docs.cloud.coinbase.com/exchange/docs/websocket-channels
  */
-inline void coinbase_client::parse(string s) {
+void coinbase_client::parse(string s) {
     string base = "";
     string target = "";
          
-    
     boost::json::value data = boost::json::parse(s);
     
     string type = boost::json::value_to<string>(data.at("type"));
@@ -91,7 +128,6 @@ inline void coinbase_client::parse(string s) {
         
         Book* b = library->checkout(get_base(product_id), get_target(product_id));
         
-
         for (int i = 0; i < bids.size(); i++) {
             double price = stod(boost::json::value_to<string>(bids.at(i).as_array().at(0)));
             double quantity = stod(boost::json::value_to<string>(bids.at(i).as_array().at(1)));
@@ -140,10 +176,6 @@ inline void coinbase_client::parse(string s) {
     }
 }
 
-inline void coinbase_client::write(string text) {
-    ws.write(boost::asio::buffer(text));
-}
-
 inline void coinbase_client::stream() {
     allowStreaming = true;
     try {
@@ -157,33 +189,9 @@ inline void coinbase_client::stream() {
     
 }
 
-inline void coinbase_client::stop_stream() {
-    allowStreaming = false;
-}
-
-inline void coinbase_client::listen() {
-    // This buffer will hold the incoming message
-    boost::beast::flat_buffer buffer;
-
-    while (allowStreaming) {
-        // Read a message into our buffer
-        ws.read(buffer);
-
-        parse(boost::beast::buffers_to_string(buffer.data()));
-        // The make_printable() function helps print a ConstBufferSequence
-        //cout << boost::beast::make_printable(buffer.data()) << endl;
-        buffer.consume(buffer.size());
-    }
-    
-    // Close the WebSocket connection
-    boost::beast::error_code ec;
-
-    // If this line throws an exception due to a truncated stream, ignore the error.
-    // https://github.com/boostorg/beast/issues/824
-    ws.close(boost::beast::websocket::close_code::normal, ec);
-
-    // If we get here then the connection is closed gracefully
-    cout << "Connection closed.\n";
+void coinbase_client::perform_websockets_handshake() {
+    cout << "Performing the websockets handshake..." << endl;
+    ws.handshake(get_host("coinbase"), "/");
 }
 
 string coinbase_client::get_base(string ticker) {
@@ -196,30 +204,24 @@ string coinbase_client::get_target(string ticker) {
     return ticker.substr(idx+1, ticker.size() - (idx+1));
 }
 
+string coinbase_client::get_host(string exchange) {
+    return "ws-feed.exchange.coinbase.com";
+}
+
+string coinbase_client::get_port(string exchange) {
+    return "443";
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 
-binance_client::binance_client(boost::asio::io_context &ioc, ssl::context &ctx) : ws(ioc, ctx) {
+binance_client::binance_client(boost::asio::io_context &ioc, ssl::context &ctx) : client(ioc, ctx) {
 
-}
-
-inline void binance_client::connect() {
-    /* Performs the websocket handshake. */
-    resolve_ip_addresses();
-    connect_to_ip_addresses(resolve_ip_addresses());
-    set_sni_hostname();
-    perform_ssl_handshake();
-    perform_websockets_handshake();
 }
 
 inline void binance_client::parse(string s) {
     // TODO
-    cout << "Parsing" << endl;
     cout << s << endl;
-}
-
-inline void binance_client::write(string text) {
-    ws.write(boost::asio::buffer(text));
 }
 
 inline void binance_client::stream() {
@@ -237,33 +239,6 @@ inline void binance_client::stream() {
     }
 }
 
-inline void binance_client::stop_stream() {
-    allowStreaming = false;
-}
-
-inline void binance_client::listen() {
-    // This buffer will hold the incoming message
-    boost::beast::flat_buffer buffer;
-    cout << "Listening" << endl;
-
-    while (allowStreaming) {
-        cout << "streaming" << endl;
-        ws.read(buffer);
-        
-        parse(boost::beast::buffers_to_string(buffer.data()));
-        buffer.consume(buffer.size());
-    }
-    
-    // Close the WebSocket connection
-    boost::beast::error_code ec;
-    // If this line throws an exception due to a truncated stream, ignore the error.
-    // https://github.com/boostorg/beast/issues/824
-    ws.close(boost::beast::websocket::close_code::normal, ec);
-
-    // If we get here then the connection is closed gracefully
-    cout << "Connection closed.\n";
-}
-
 string binance_client::get_base(string ticker) {
     size_t idx = ticker.find("-");
     return ticker.substr(0, idx);
@@ -274,41 +249,15 @@ string binance_client::get_target(string ticker) {
     return ticker.substr(idx+1, ticker.size() - (idx+1));
 }
 
-boost::asio::ip::tcp::resolver::results_type binance_client::resolve_ip_addresses() {
-    cout << "Looking up the domain name..." << endl;
-    boost::asio::ip::tcp::resolver resolver{io};
-    boost::asio::ip::tcp::resolver::results_type results = resolver.resolve(BASE_URL, PORT);
-    return results;
-}
-
-void binance_client::connect_to_ip_addresses(boost::asio::ip::tcp::resolver::results_type endpoints) {
-    boost::asio::connect(get_lowest_layer(ws), endpoints);
-}
-
-void binance_client::set_sni_hostname() {
-    cout << "Setting SNI host names..." << endl;
-    if (!SSL_set_tlsext_host_name(ws.next_layer().native_handle(),
-                                          BASE_URL.c_str()))
-        throw boost::beast::system_error(
-                                         boost::beast::error_code(static_cast<int>(::ERR_get_error()),
-                                      boost::asio::error::get_ssl_category()),
-                    "Failed to set SNI Hostname");
-}
-
-void binance_client::perform_ssl_handshake() {
-    cout << "Performing the SSL handshake..." << endl;
-    ws.next_layer().handshake(ssl::stream_base::client);
-}
-
 void binance_client::perform_websockets_handshake() {
-    ws.set_option(boost::beast::websocket::stream_base::decorator(
-                                                                  [](boost::beast::websocket::request_type& req)
-        {
-            req.set(boost::beast::http::field::user_agent,
-                string(BOOST_BEAST_VERSION_STRING) +
-                    " websocket-client-coro");
-        }));
-    
     cout << "Performing the websockets handshake..." << endl;
-    ws.handshake(BASE_URL + ":" + PORT, "/ws");
+    ws.handshake(get_host("binance") + ":" + get_port("binance"), "/ws");
+}
+
+string binance_client::get_host(string exchange) {
+    return "stream.binance.com";
+}
+
+string binance_client::get_port(string exchange) {
+    return "9443";
 }

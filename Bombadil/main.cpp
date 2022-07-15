@@ -47,9 +47,13 @@ void stop(std::string s, coinbase_client* cb, triarb* arb) {
 }
 
 int main() {
+    cout << "Welcome!" << endl;
     boost::asio::ssl::context ctx(boost::asio::ssl::context::tlsv12);
     boost::asio::io_context ioc;
+    binance_client binanceClient{ioc, ctx};
+    binanceClient.connect();
     coinbase_client client{ioc, ctx};
+    //binanceClient.stream();
     
     Library* ob_library = new Library();
     client.library = ob_library;
@@ -78,19 +82,6 @@ int main() {
             std::cout << "Stopping stream" << std::endl;
             stop(input, &client, arb);
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            
-            Book* b = ob_library->checkout("BTC", "USD");
-            std::cout << "BIDS" << std::endl;
-            for (auto const &pair: b->bids) {
-                std::cout << "{" << pair.first << ": " << pair.second << "}\n";
-            }
-            
-            std::cout << "\n\n\nASKS" << std::endl;
-            for (auto const &pair: b->asks) {
-                    std::cout << "{" << pair.first << ": " << pair.second << "}\n";
-            }
-            ob_library->checkin("BTC","USD");
-            
         } else if (input == "quit") {
             shutdown(input);
         } else {
