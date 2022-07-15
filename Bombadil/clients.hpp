@@ -21,6 +21,8 @@
 #include <boost/asio/connect.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ssl/stream.hpp>
+#include <boost/bind.hpp>
+#include <boost/asio/placeholders.hpp>
 
 #include <boost/json/src.hpp>
 #include <boost/json.hpp>
@@ -63,7 +65,7 @@ class binance_client {
 public:
     
     // CONFIG
-    const string BASE_URL = "wss://stream.binance.com";
+    const string BASE_URL = "stream.binance.com";
     const string PORT = "9443";
     // END CONFIG
     
@@ -75,15 +77,22 @@ public:
     boost::asio::io_context io;
     
     binance_client(boost::asio::io_context &ioc, ssl::context &ctx);
+    
     void connect();
     void parse(string s);
     void write(string text);
+    string getDepthSnapshot(string ticker);
     
     void stream();
     void stop_stream();
     void listen();
     
 private:
+    boost::asio::ip::tcp::resolver::results_type resolve_ip_addresses();
+    void connect_to_ip_addresses(boost::asio::ip::tcp::resolver::results_type endpoints);
+    void set_sni_hostname();
+    void perform_ssl_handshake();
+    void perform_websockets_handshake();
     string get_base(string ticker);
     string get_target(string ticker);
 };
