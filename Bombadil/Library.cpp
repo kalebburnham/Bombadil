@@ -12,7 +12,6 @@ Book::Book(string base, string target) : base(base), target(target) {
     
 }
 
-// Returns true if the insertion took place or false if the assignment took place.
 void Book::add_ask(double price, double quantity) {
     asks.insert_or_assign(price, quantity);
 }
@@ -27,6 +26,11 @@ unsigned long Book::remove_ask(double price) {
 
 unsigned long Book::remove_bid(double price) {
     return bids.erase(price);
+}
+
+void Book::clear() {
+    bids.clear();
+    asks.clear();
 }
 
 pair<double, double> Book::best_bid() {

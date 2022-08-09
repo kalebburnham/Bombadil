@@ -16,6 +16,18 @@
 
 using namespace std;
 
+class Order {
+public:
+    long long updateId;
+    string broker;
+    
+    string base;
+    string target;
+    
+    double price;
+    double quantity;
+};
+
 class Book {
 public:
     long long updateId;
@@ -32,7 +44,9 @@ public:
     unsigned long remove_ask(double price);
     unsigned long remove_bid(double price);
     
-    pair<double, double> best_bid();
+    void clear();
+    
+    pair<double, double> best_bid(); // typedefs might be useful for these return values
     pair<double, double> best_ask();
 };
 

@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <thread>
 
 #include "Library.hpp"
 
@@ -25,6 +26,9 @@ public:
     triarb();
     void start();
     void stop();
+    
+private:
+    void analyze();
 };
 
 #endif /* arbitrage_hpp */

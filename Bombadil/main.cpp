@@ -8,6 +8,13 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <fstream>
+
+#include <boost/json.hpp>
+#include <boost/json/src.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/foreach.hpp>
 
 #include "Library.hpp"
 #include "clients.cpp"
@@ -16,10 +23,7 @@
 bool streaming_is_enabled = true;
 
 void analyze(std::string s, triarb* arb) {
-    std::thread t2(&triarb::start, arb);
-    std::cout << "Kicked off analyzer. Detaching thread..." << std::endl;
-    t2.detach();
-    //arb->start();
+    arb->start();
 }
 
 void connect(std::string s, coinbase_client* cb) {
@@ -35,10 +39,11 @@ void shutdown(std::string s) {
     exit(0);
 }
 
-void stream(std::string s, coinbase_client* cb) {
-    std::thread t1(&coinbase_client::stream, cb);
-    std::cout << "Kicked off. Detaching thread..." << std::endl;
-    t1.detach();
+void stream(std::string s, coinbase_client* c) {
+    //std::thread t1(&coinbase_client::stream, c);
+    //std::cout << "Kicked off. Detaching thread..." << std::endl;
+    //t1.detach();
+    c->stream();
 }
 
 void stop(std::string s, coinbase_client* cb, triarb* arb) {
@@ -51,10 +56,19 @@ int main() {
     boost::asio::ssl::context ctx(boost::asio::ssl::context::tlsv12);
     boost::asio::io_context ioc;
     binance_client binanceClient{ioc, ctx};
-    binanceClient.connect();
+    //binanceClient.connect();
     coinbase_client client{ioc, ctx};
     //binanceClient.stream();
     
+    
+    boost::property_tree::ptree pt;
+    boost::property_tree::read_json("/Users/kalebburnham/Workspaces/Bombadil/Bombadil/config.json", pt);
+    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, pt.get_child("clients")) {
+            // The data function is used to access the data stored in a node.
+            //m_modules.insert(v.second.data());
+        cout << v.second.get_value<string>() << endl;
+        
+    }
     Library* ob_library = new Library();
     client.library = ob_library;
 
@@ -63,6 +77,18 @@ int main() {
     arb->books[0] = make_pair("ETH", "USD");
     arb->books[1] = make_pair("ETH", "BTC");
     arb->books[2] = make_pair("BTC", "USD");
+    
+    std::ifstream t("/Users/kalebburnham/Workspaces/Bombadil/Bombadil/config.json");
+    string content( (std::istreambuf_iterator<char>(t) ),
+                           (std::istreambuf_iterator<char>()    ) );
+    
+    cout << content << endl;
+    
+    boost::json::value config = boost::json::parse(content);
+    cout << config.at("clients").as_object() << endl;
+    
+    boost::asio::io_service ios;
+    
     
     while (1) {
         std::string input = "";
@@ -91,3 +117,4 @@ int main() {
 
     return 0;
 }
+

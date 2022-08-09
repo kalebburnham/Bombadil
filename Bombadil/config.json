@@ -1,0 +1,50 @@
+{
+    "clients": {
+        "binance": {
+            "active": 1,
+            "host": "stream.binance.com",
+            "port": 9443,
+            "header": "clients.hpp",
+            "class_name": "binance_client",
+            "trading_pairs": {
+                
+            }
+        },
+        "coinbase": {
+            "active": 1,
+            "host": "ws-feed.exchange.coinbase.com",
+            "port": 443,
+            "header": "clients.hpp",
+            "class_name": "coinbase_client",
+            "trading_pairs": "ETH-USD, ETH-BTC, BTC-USD"
+        }
+    },
+    "analyzers": {
+        "triangular_arbitrage": {
+            "header": "arbitrage.hpp",
+            "class_name": "triarb",
+            "clients": {
+                "binance": {
+                    "active": 1,
+                    "trading_pairs": {
+                        
+                    }
+                },
+                "coinbase": {
+                    "active": 1,
+                    "trading_pairs": {
+                        "ETH-USD": {
+                            "invert": 0
+                        },
+                        "ETH-BTC": {
+                            "invert": 0
+                        },
+                        "BTC-USD": {
+                            "invert": 0
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

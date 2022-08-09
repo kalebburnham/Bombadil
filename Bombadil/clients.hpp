@@ -18,11 +18,15 @@
 #include <boost/beast/ssl.hpp>
 #include <boost/beast/websocket.hpp>
 #include <boost/beast/websocket/ssl.hpp>
+#include <boost/beast/http/dynamic_body.hpp>
 #include <boost/asio/connect.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ssl/stream.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio/placeholders.hpp>
+#include <boost/asio.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/ref.hpp>
 
 #include <boost/json/src.hpp>
 #include <boost/json.hpp>
@@ -83,6 +87,7 @@ public:
     void parse(string s);
     string getDepthSnapshot(string ticker);
     void stream();
+    void write_http();
     
 private:
     void perform_websockets_handshake();
@@ -91,6 +96,5 @@ private:
     string get_host(string exchange);
     string get_port(string exchange);
 };
-
 
 #endif /* clients_hpp */
